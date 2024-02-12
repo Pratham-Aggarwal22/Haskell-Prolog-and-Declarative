@@ -1,0 +1,86 @@
+// Haskell version of a variation on fib:
+//    fib :: Integer -> Integer
+//    fib 0 = 1
+//    fib 1 = 2
+//    fib n = fib (n-1) + fib (n-2)
+//
+// Rewrite fib in Oz kernel syntax using the template below, including
+// a "skip Stack" command added to the first base case (n=0), using the 
+// primitive operations {Eq X Y B}, {IntMinus X Y A}, and {IntPlus X Y A}.
+// 
+// Run this file through the Oz interpreter by calling
+//    runFull "declarative" "fib_oz.txt" "fib_oz.out"
+// in ghci and give a brief explanation of each of the stack outputs.
+
+  local X Result in
+   local Zero One Two B1 B2 Temp1 Temp2 in
+      Zero = 0
+      One = 1
+      Two = 2
+
+      {Eq X Zero B1}
+      {Eq X One B2}
+
+      if B1 then
+         Result = 1
+         skip Stack  % Special case for n=0
+      else
+         if B2 then
+            Result = 2
+         else
+            {IntMinus X One Temp1}
+            {IntMinus X Two Temp2}
+            {Fib Temp1 Temp1Result}
+            {Fib Temp2 Temp2Result}
+            {IntPlus Temp1Result Temp2Result Result}
+         end
+      end
+   end
+
+   X = 4
+   {Fib X Result}
+   skip Browse Result
+end
+
+
+---------------
+[OUTPUT]
+
+ghci> runFull "declarative" "fib_oz.txt" "fib_oz.out"
+Variable Output undeclared
+ghci> runFull "declarative" "fib_oz.txt" "fib_oz.out"
+Stack : "local [\"EXU1\",\"EXU2\"] [EXU1 = X2,EXU2 = Y,\"Fib\" \"EXU1\" \"EXU2\"]local [\"EXU1\",\"EXU2\",\"EXU3\"] [EXU1 = XS,EXU2 = Y,EXU3 = A,\"IntPlus\" \"EXU1\" \"EXU2\" \"EXU3\"]local [\"EXU1\",\"EXU2\"] [EXU1 = X2,EXU2 = Y,\"Fib\" \"EXU1\" \"EXU2\"]local [\"EXU1\",\"EXU2\",\"EXU3\"] [EXU1 = XS,EXU2 = Y,EXU3 = A,\"IntPlus\" \"EXU1\" \"EXU2\" \"EXU3\"]local [\"EXU1\",\"EXU2\"] [EXU1 = X2,EXU2 = Y,\"Fib\" \"EXU1\" \"EXU2\"]local [\"EXU1\",\"EXU2\",\"EXU3\"] [EXU1 = XS,EXU2 = Y,EXU3 = A,\"IntPlus\" \"EXU1\" \"EXU2\" \"EXU3\"]skip/BResult"
+
+Stack : "local [\"EXU1\",\"EXU2\",\"EXU3\"] [EXU1 = XS,EXU2 = Y,EXU3 = A,\"IntPlus\" \"EXU1\" \"EXU2\" \"EXU3\"]local [\"EXU1\",\"EXU2\"] [EXU1 = X2,EXU2 = Y,\"Fib\" \"EXU1\" \"EXU2\"]local [\"EXU1\",\"EXU2\",\"EXU3\"] [EXU1 = XS,EXU2 = Y,EXU3 = A,\"IntPlus\" \"EXU1\" \"EXU2\" \"EXU3\"]skip/BResult"
+
+Stack : "local [\"EXU1\",\"EXU2\"] [EXU1 = X2,EXU2 = Y,\"Fib\" \"EXU1\" \"EXU2\"]local [\"EXU1\",\"EXU2\",\"EXU3\"] [EXU1 = XS,EXU2 = Y,EXU3 = A,\"IntPlus\" \"EXU1\" \"EXU2\" \"EXU3\"]local [\"EXU1\",\"EXU2\",\"EXU3\"] [EXU1 = XS,EXU2 = Y,EXU3 = A,\"IntPlus\" \"EXU1\" \"EXU2\" \"EXU3\"]skip/BResult"
+
+Result : 5
+
+
+
+
+-----------------------
+[EXPLAINATION]
+
+Code:
+We start by defining Zero, One, Two, B1, B2, Temp1, Temp2, X, and Result.
+Then we use the {Eq} operation to check if X is equal to Zero and One and assigns the results to B1 and B2. These checks determine if X is 0 or 1.
+If B1 is true (i.e., X is 0), the program assigns Result the value 1 and includes the comment skip Stack. This is the case for when n=0.
+If B2 is true (i.e., X is 1), the program assigns Result the value 2.
+If both of them are not true, it recursively calls the Fib procedure on Temp1 and Temp2 to calculate Temp1Result and Temp2Result
+
+Output:
+ "Stack" show the stack traces generated during the execution of the program. These traces indicate the steps and recursive calls within the program's execution.
+At the end, result 5, shows the result of fib4. 
+
+
+
+
+
+
+
+
+
+
+

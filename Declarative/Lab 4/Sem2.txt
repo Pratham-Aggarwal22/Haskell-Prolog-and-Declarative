@@ -1,0 +1,66 @@
+// Run this program through the Oz interpreter by calling
+//    runFull "declarative" "Sem2.txt" "Sem2.out"
+// Explain the resulting store
+
+local Max Y in
+  Max = proc {$ X}
+    local B in 
+        {GT X Y B}
+        if B then
+          skip Browse X
+        else
+          skip Browse Y
+        end
+    end
+  end
+  Y = 3
+  local X Y in 
+    Y = 6
+    X = 4
+    skip Full
+    {Max X}
+  end
+end
+
+-------------------------------
+[OUTPUT]
+
+ghci> runFull "declarative" "Sem2.txt" "Sem2.out"
+Store : ((10), 4), 
+((11), 6), 
+((8), proc(["X"],[local ["B"] [local ["EXU1","EXU2","EXU3"] [EXU1 = X,EXU2 = Y,EXU3 = B,"GT" "EXU1" "EXU2" "EXU3"],local ["EXU1"] [EXU1 = B,if EXU1 then [skip/BX] else [skip/BY]]]],[("Y",9),("GT",4)])), 
+((9), 3), 
+((1), Primitive Operation), 
+((2), Primitive Operation), 
+((3), Primitive Operation), 
+((4), Primitive Operation), 
+((5), Primitive Operation), 
+((6), Primitive Operation), 
+((7), Primitive Operation)
+
+Mutable Store: Empty
+Current Environment : ("X" -> 10, "Y" -> 11, "Max" -> 8, "Y" -> 9, "IntPlus" -> 1, "IntMinus" -> 2, "Eq" -> 3, "GT" -> 4, "LT" -> 5, "Mod" -> 6, "IntMultiply" -> 7)
+Stack : "local [\"EXU1\"] [EXU1 = X,\"Max\" \"EXU1\"]"
+
+X : 4
+
+
+-----------------------------------------
+[Explaination]
+
+Store: Store again tells the same thing. The first element is a set of memory addresses, and the second element is the associated value.
+Like,
+((8), proc([...])): Memory address 8 contains a procedure (a closure) with its own environment and code. This corresponds to the Max procedure.
+((9), 3): Memory address 9 contains the value 3, which corresponds to the inner variable Y.
+
+The mutable store is empty again, indicating that there are no mutable variables in the program.
+
+Current Environment indicates each variable is associated with a memory address.
+
+Stack : "local [\"EXU1\"] [EXU1 = X,\"Max\" \"EXU1\"]": It indicates variable 'EXU1'  bound to the value of X. It also calls 'Max' procedure with the argument EXU1.
+
+X : 4, says that x has a value 4.
+
+
+
+
